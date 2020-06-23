@@ -16,7 +16,8 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardAvatar from "components/Card/CardAvatar.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
-
+import baseServices from "services/baseServices.js"
+import axios from 'axios';
 const styles = {
     cardCategoryWhite: {
         color: "rgba(255,255,255,.62)",
@@ -39,6 +40,7 @@ const styles = {
 const useStyles = makeStyles(styles);
 
 export default function Login() {
+   
     const classes = useStyles();
 
     const [state, setState] = React.useState({
@@ -50,9 +52,29 @@ export default function Login() {
     };
 
     const { Remember } = state;
+    function getData() {
+        let config = {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json',
+            }
+        }
+        axios.get("https://localhost:44336/News", {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json',
+            }
+        }).then(res => {
+            alert(1);
+            console.log(res);
+        });
+       
+    }
+    getData();
+
     return (
         <div>
-            <GridContainer xs={12} md={12} justify={'center'} alignItems={'center'}>
+            <GridContainer justify={'center'} alignItems={'center'}>
                 <GridItem xs={12} sm={12} md={6}>
                     <Card>
                         <CardHeader color="primary">
