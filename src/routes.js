@@ -23,6 +23,7 @@ import BubbleChart from "@material-ui/icons/BubbleChart";
 import LocationOn from "@material-ui/icons/LocationOn";
 import Notifications from "@material-ui/icons/Notifications";
 import Unarchive from "@material-ui/icons/Unarchive";
+import QrCodeScanner from "@material-ui/icons/Straighten";
 import Language from "@material-ui/icons/Language";
 import ListProductIo from "@material-ui/icons/LocalGroceryStoreOutlined";
 // core components/views for Admin layout
@@ -123,7 +124,7 @@ const dashboardRoutes = [
     path: "/campaingn",
     name: "Campain",
     rtlName: "Chiến dịch",
-    icon: Unarchive,
+    icon: QrCodeScanner,
     component: Campaingn,
     layout: "/admin"
   }

@@ -52,9 +52,12 @@ import {
 import InputAdornment from '@material-ui/core/InputAdornment';
 // icon
 import SaveIcon from '@material-ui/icons/Save';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+
 function createData(code, name, type, fromdate, todate, quantity, value, status) {
   return { code, name, type, fromdate, todate, quantity, value, status };
+}
+function CodeVoucher(code, userBuy,  fromdate, todate, dateUsing, value, status) {
+  return { code, userBuy, fromdate, todate, dateUsing, value, status };
 }
 var toDate = new Date();
 const rows = [
@@ -71,6 +74,21 @@ const rows = [
   createData('PHVC000003', 'Marshmallow', 1, toDate, toDate, 1000, 10000, 2.0),
   createData('PHVC000003', 'Nougat', 1, toDate, toDate, 1000, 10000, 37.0),
   createData('PHVC000003', 'Oreo', 1, toDate, toDate, 1000, 10000, 4.0),
+];
+const ListCodeVoucher = [
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, toDate, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
+  CodeVoucher('PHVC000003', '', toDate, toDate, null, null, 1),
 ];
 
 const top100Films = [
@@ -217,9 +235,18 @@ const headCells = [
   { id: 'value', numeric: true, disablePadding: false, label: 'Giá trị' },
   { id: 'status', numeric: true, disablePadding: false, label: 'Trạng thái' },
 ];
+const headListCodeVoucherCells = [
+  { id: 'code', numeric: false, disablePadding: false, label: 'Mã voucher' },
+  { id: 'name', numeric: false, disablePadding: false, label: 'Người mua' },
+  { id: 'fromdate', numeric: true, disablePadding: false, label: 'Ngày bắt đầu' },
+  { id: 'todate', numeric: true, disablePadding: false, label: 'Ngày kết thúc' },
+  { id: 'dateUsing', numeric: true, disablePadding: false, label: 'Ngày sử dụng' },
+  { id: 'value', numeric: true, disablePadding: false, label: 'Giá bán' },
+  { id: 'status', numeric: true, disablePadding: false, label: 'Trạng thái' },
+];
 
 function EnhancedTableHead(props) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, data } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -235,7 +262,7 @@ function EnhancedTableHead(props) {
             inputProps={{ 'aria-label': 'select all desserts' }}
           />
         </TableCell>
-        {headCells.map((headCell) => (
+        {data.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
@@ -269,6 +296,7 @@ EnhancedTableHead.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
+  data: PropTypes.object.isRequired
 };
 
 const useToolbarStyles = makeStyles((theme) => ({
@@ -361,38 +389,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `full-width-tab-${index}`,
-    'aria-controls': `full-width-tabpanel-${index}`,
-  };
-}
 function NumberFormatCustom(props) {
   const { inputRef, onChange, ...other } = props;
 
@@ -431,13 +427,74 @@ export default function Campaign() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [open, setOpen] = React.useState(false);
   const [value, setValueTab] = React.useState(0);
-  const [status, setStatus] = React.useState('1');
-  const [system, setSystem] = React.useState('1');
+  const [status, setStatus] = React.useState("1");
+  const [system, setSystem] = React.useState("-1");
+  const [customer, setCustomer] = React.useState("-1");
   const [optionSelectSystem, setOptionSelectSystem] = React.useState(true);
+  const [optionSelectCustomer, setOptionSelectCustomer] = React.useState(true);
   const [startDate, setSelectedStartDate] = React.useState(new Date());
   const [endDate, setSelectedEndDate] = React.useState(new Date());
   const [price, setPriceValues] = React.useState({ textmask: ',', numberformat: '' });
   const [values, setValues] = React.useState({ textmask: ',', numberformat: '' });
+  const [openDialogConfirmSave, setOpenDialogConfirmSave] = React.useState(false);
+
+  function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`full-width-tabpanel-${index}`}
+        aria-labelledby={`full-width-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box p={3}>
+            <Typography>{children}</Typography>
+          </Box>
+        )}
+      </div>
+    );
+  }
+
+  TabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.any.isRequired,
+    value: PropTypes.any.isRequired,
+  };
+
+  function a11yProps(index) {
+
+    return {
+      id: `full-width-tab-${index}`,
+      'aria-controls': `full-width-tabpanel-${index}`,
+    };
+  };
+
+  const handleChangeTab = (event, newValue) => {
+    if (newValue === 2) {
+      setOpenDialogConfirmSave(true);
+    }
+    setValueTab(newValue);
+  };
+
+  const handleChangeTabIndex = (index) => {
+    if (index === 2) {
+      alert(index);
+      // setOpenDialogConfirmSave(true);
+    }
+    setValueTab(index);
+  };
+
+  const handleSaveCampaingn = () => {
+    setOpenDialogConfirmSave(false);
+  };
+
+  const handleCloseDialogConfirmSave = () => {
+    setOpenDialogConfirmSave(false);
+  };
+
   const handlePriceChange = (event) => {
     setPriceValues({
       ...price,
@@ -461,13 +518,20 @@ export default function Campaign() {
   };
   const handleSystemChange = (event) => {
     setSystem(event.target.value);
-    if(system == 1){
+    if (system === -1) {
       setOptionSelectSystem(false);
-    }else{
+    } else {
       setOptionSelectSystem(true);
     }
   };
-
+  const handleCustomerChange = (event) => {
+    setCustomer(event.target.value);
+    if (customer === -1) {
+      setOptionSelectCustomer(false);
+    } else {
+      setOptionSelectCustomer(true);
+    }
+  };
   //Button mở form thêm mới chiến dịch
   const handleClickOpenFromCreate = () => {
     setOpen(true);
@@ -529,13 +593,7 @@ export default function Campaign() {
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-  const handleChangeTab = (event, newValue) => {
-    setValueTab(newValue);
-  };
 
-  const handleChangeTabIndex = (index) => {
-    setValueTab(index);
-  };
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -562,6 +620,7 @@ export default function Campaign() {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
+              data={headCells}
             />
             <TableBody>
               {stableSort(rows, getComparator(order, orderBy))
@@ -631,7 +690,6 @@ export default function Campaign() {
               indicatorColor="primary"
               textColor="primary"
               variant="fullWidth"
-              aria-label="full width tabs example"
             >
               <Tab label="Thông tin" {...a11yProps(0)} />
               <Tab label="Áp dụng" {...a11yProps(1)} />
@@ -799,47 +857,143 @@ export default function Campaign() {
                       }}
                     />
                   </GridItem>
-                  <GridItem md={12}>
-                    <Typography variant="h6" gutterBottom>Phạm vi áp dụng</Typography>
-                  </GridItem>
-                  <GridItem xs={12} sm={12} md={6}>
-                    <RadioGroup row aria-label="system" name="system" value={system} onChange={handleSystemChange}>
-                      <GridContainer md={12}>
-                        <GridItem md={12}>
-                          <FormControlLabel value="1" control={<Radio color="primary" />} label="Toàn hệ thống" />
-                        </GridItem>
-                        <GridItem md={4}>
-                          <FormControlLabel value="2" control={<Radio color="primary" />} label="Chi nhánh" />
-                        </GridItem>
-                        <GridItem md={8}>
-                          <Tooltip title="Hóa đơn này có chứa các hàng hóa được thanh toán bằng voucher" placement="top">
-                            <Autocomplete
-                              multiple
-                              options={listAddress}
-                              getOptionLabel={(option) => option.title}
-                              filterSelectedOptions
-                              disabled={optionSelectSystem}
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  variant="outlined"
-                                  label="Chi nhánh áp dụng"
-                                  placeholder="Chọn"
-                                  fullWidth
-                                />
-                              )}
-                            />
-                          </Tooltip>
-                        </GridItem>
-                      </GridContainer>
-                    </RadioGroup>
-                  </GridItem>
                 </GridContainer>
               </MuiPickersUtilsProvider>
-
+              <GridContainer>
+                <GridItem md={12}>
+                  <Typography variant="h6" gutterBottom>Phạm vi áp dụng</Typography>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={6}>
+                  <RadioGroup row aria-label="system" name="system" value={system} onChange={handleSystemChange}>
+                    <GridContainer md={12}>
+                      <GridItem md={12}>
+                        <FormControlLabel value="-1" control={<Radio color="primary" />} label="Toàn hệ thống" />
+                      </GridItem>
+                      <GridItem md={4}>
+                        <FormControlLabel value="1" control={<Radio color="primary" />} label="Chi nhánh" />
+                      </GridItem>
+                      <GridItem md={8}>
+                        <Tooltip title="Hóa đơn này có chứa các hàng hóa được thanh toán bằng voucher" placement="top">
+                          <Autocomplete
+                            multiple
+                            options={listAddress}
+                            getOptionLabel={(option) => option.title}
+                            filterSelectedOptions
+                            disabled={optionSelectSystem}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                variant="outlined"
+                                label="Chi nhánh áp dụng"
+                                placeholder="Chọn"
+                                fullWidth
+                              />
+                            )}
+                          />
+                        </Tooltip>
+                      </GridItem>
+                    </GridContainer>
+                  </RadioGroup>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={6}>
+                  <RadioGroup row aria-label="system" name="system" value={customer} onChange={handleCustomerChange}>
+                    <GridContainer md={12}>
+                      <GridItem md={12}>
+                        <FormControlLabel value="-1" control={<Radio color="primary" />} label="Toàn bộ khách hàng" />
+                      </GridItem>
+                      <GridItem md={4}>
+                        <FormControlLabel value="1" control={<Radio color="primary" />} label="Nhóm khách hàng" />
+                      </GridItem>
+                      <GridItem md={8}>
+                        <Tooltip title="Nhóm khách hàng được thanh toán bằng voucher này" placement="top">
+                          <Autocomplete
+                            multiple
+                            options={listAddress}
+                            getOptionLabel={(option) => option.title}
+                            filterSelectedOptions
+                            disabled={optionSelectCustomer}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                variant="outlined"
+                                label="Nhóm khách hàng"
+                                placeholder="Chọn"
+                                fullWidth
+                              />
+                            )}
+                          />
+                        </Tooltip>
+                      </GridItem>
+                    </GridContainer>
+                  </RadioGroup>
+                </GridItem>
+              </GridContainer>
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
-              Item Three
+              Bạn cần phải lưu đợt phát hành voucher trước khi tạo danh sách voucher
+              <TableContainer>
+                <Table
+                  className={classes.table}
+                  aria-labelledby="tableTitle"
+                  size={dense ? 'small' : 'medium'}
+                  aria-label="enhanced table"
+                >
+                  <EnhancedTableHead
+                    classes={classes}
+                    numSelected={selected.length}
+                    order={order}
+                    orderBy={orderBy}
+                    onSelectAllClick={handleSelectAllClick}
+                    onRequestSort={handleRequestSort}
+                    rowCount={ListCodeVoucher.length}
+                    data={headListCodeVoucherCells}
+                  />
+                  <TableBody>
+                    {stableSort(ListCodeVoucher, getComparator(order, orderBy))
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row, index) => {
+                        const isItemSelected = isSelected(row.code);
+                        const labelId = `enhanced-table-checkbox-${index}`;
+                        return (
+                          <TableRow
+                            hover
+                            onClick={(event) => handleClick(event, row.code)}
+                            role="checkbox"
+                            aria-checked={isItemSelected}
+                            tabIndex={-1}
+                            key={row.code}
+                            selected={isItemSelected}
+                          >
+                            <TableCell padding="checkbox">
+                              <Checkbox checked={isItemSelected} inputProps={{ 'aria-labelledby': labelId }} />
+                            </TableCell>
+                            <TableCell align="left">{row.code}</TableCell>
+                            <TableCell align="left">{row.userBuy}</TableCell>
+                            <TableCell align="right"><Moment format="DD/MM/YYYY">{row.frodate}</Moment></TableCell>
+                            <TableCell align="right"><Moment format="DD/MM/YYYY">{row.todate}</Moment></TableCell>
+                            <TableCell align="right">{row.dateUsing}</TableCell>
+                            <TableCell align="right">{row.value}</TableCell>
+                            <TableCell align="right">{row.status}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    {emptyRows > 0 && (
+                      <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25, 50, 100, 1000]}
+                component="div"
+                count={rows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
             </TabPanel>
           </SwipeableViews>
         </DialogContent>
@@ -849,6 +1003,26 @@ export default function Campaign() {
           </Button>
           <Button onClick={handleCloseFromCreate} color="primary" autoFocus>
             Đóng
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openDialogConfirmSave}
+        onClose={handleCloseDialogConfirmSave}
+      >
+        <DialogTitle>{"Thêm đợt phát hành voucher"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Bạn cần phải lưu đợt phát hành voucher trước khi tạo danh sách voucher. Bạn có muốn lưu không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleSaveCampaingn} color="primary" variant="contained" startIcon={<SaveIcon />}>
+            Đồng ý
+          </Button>
+          <Button onClick={handleCloseDialogConfirmSave} color="primary" autoFocus>
+            Bỏ qua
           </Button>
         </DialogActions>
       </Dialog>
