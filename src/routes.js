@@ -23,6 +23,7 @@ import BubbleChart from "@material-ui/icons/BubbleChart";
 import LocationOn from "@material-ui/icons/LocationOn";
 import Notifications from "@material-ui/icons/Notifications";
 import Unarchive from "@material-ui/icons/Unarchive";
+import QrCodeScanner from "@material-ui/icons/Straighten";
 import Language from "@material-ui/icons/Language";
 import ListProductIo from "@material-ui/icons/LocalGroceryStoreOutlined";
 // core components/views for Admin layout
@@ -35,6 +36,7 @@ import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
 import UpgradeToPro from "views/UpgradeToPro/UpgradeToPro.js";
 import ListProduct from "views/Products/list.js";
+import Campaingn from "views/Campaingn/Campaingn.js";
 // core components/views for RTL layout
 import RTLPage from "views/RTLPage/RTLPage.js";
 
@@ -98,7 +100,7 @@ const dashboardRoutes = [
   {
     path: "/rtl-page",
     name: "RTL Support",
-    rtlName: "پشتیبانی از راست به چپ",
+    rtlName: "RTL Support",
     icon: Language,
     component: RTLPage,
     layout: "/rtl"
@@ -109,14 +111,21 @@ const dashboardRoutes = [
     rtlName: "التطور للاحترافية",
     icon: Unarchive,
     component: UpgradeToPro,
-    layout: "/admin"
-  },
+    layout: "/admin"  },
   {
     path: "/list",
     name: "List Product",
     rtlName: "List Product",
     icon: ListProductIo,
     component: ListProduct,
+    layout: "/admin"
+  },
+  {
+    path: "/campaingn",
+    name: "Campain",
+    rtlName: "Chiến dịch",
+    icon: QrCodeScanner,
+    component: Campaingn,
     layout: "/admin"
   }
 

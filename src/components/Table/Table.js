@@ -34,7 +34,7 @@ export default function CustomTable(props) {
             </TableRow>
           </TableHead>
         ) : null}
-        <TableBody>
+        {/* <TableBody>
           {tableData.map((prop, key) => {
             return (
               <TableRow key={key} className={classes.tableBodyRow}>
@@ -48,7 +48,7 @@ export default function CustomTable(props) {
               </TableRow>
             );
           })}
-        </TableBody>
+        </TableBody> */}
       </Table>
     </div>
   );
